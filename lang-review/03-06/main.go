@@ -11,10 +11,24 @@ import "fmt"
 //composite literal to add values to the field favFood; print out the values
 //in favFood; also print out the values for “favFood” by using a for range loop
 
+//Add a method to type “person” with the identifier “walk”. Have the func
+//return this string: <person’s first name> is walking. Remember, you make a
+//func a method by giving the func a receiver.
+//func (r receiver) identifier(parameters) (returns) {
+//	<code>
+//}
+//To return a string, use fmt.Sprintln. Call the method assigning the returned
+//string to a variable with the identifier “s”. Print out “s”.
+
 type person struct {
 	fName string
 	lName string
 }
+
+func (p *person) walk() string {
+	return fmt.Sprintf("%s is walking", p.fName)
+}
+
 type personFood struct {
 	fName   string
 	lName   string
@@ -35,4 +49,7 @@ func main() {
 	for _, food := range p2.favFood {
 		fmt.Println(food)
 	}
+	fmt.Println("-------------------------------")
+	s := p1.walk()
+	fmt.Println(s)
 }
