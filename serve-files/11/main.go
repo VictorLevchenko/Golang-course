@@ -3,6 +3,8 @@ package main
 import (
 	"net/http"
 	"log"
+	"html/template"
+	"fmt"
 )
 
 /*
@@ -17,12 +19,25 @@ if req.Method == http.MethodPost {
 // code here
 return
 }
-func StripPrefix(prefix string, h Handler) Handler
-func FileServer(root FileSystem) Handler
 */
+var tpl *template.Template
+
+func init() {
+	var err error
+	tpl, err = template.ParseGlob("./templates/*")
+	if err != nil {
+		log.Fatalf("templates missing. %s", err)
+	}
+}
 
 func main() {
-//TODO not solved yet
+
+	http.HandleFunc("/", index)
+	http.HandleFunc("/about", about)
+	http.HandleFunc("/apply", apply)
+	http.HandleFunc("/contact", contact)
+
+	fmt.Println("Server starting...")
 	http.ListenAndServe(":8080", nil)
 }
 
@@ -42,14 +57,21 @@ func contact(w http.ResponseWriter, req *http.Request) {
 }
 
 func apply(w http.ResponseWriter, req *http.Request) {
-	err := tpl.ExecuteTemplate(w, "apply.gohtml", nil)
+	var err error
+	switch req.Method {
+	case http.MethodGet:
+		err = tpl.ExecuteTemplate(w, "apply.gohtml", nil)
+	case http.MethodPost:
+		err = tpl.ExecuteTemplate(w, "applyProcess.gohtml", nil)
+
+	}
 	HandleError(w, err)
 }
 
-func applyProcess(w http.ResponseWriter, req *http.Request) {
+/*func applyProcess(w http.ResponseWriter, req *http.Request) {
 	err := tpl.ExecuteTemplate(w, "applyProcess.gohtml", nil)
 	HandleError(w, err)
-}
+}*/
 
 func HandleError(w http.ResponseWriter, err error) {
 	if err != nil {
